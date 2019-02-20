@@ -53,7 +53,6 @@ class DataLoader :
 
     def crop_scenario_npy(self, scenario_id : int, res : int):
         for i in tqdm(range(500)) :
-            #print("Cropping frame {}...".format(i))p
             self.crop_unique_npy(scenario_id, i ,res)
 
 
