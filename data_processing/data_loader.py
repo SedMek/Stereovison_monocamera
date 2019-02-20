@@ -12,11 +12,11 @@ class DataLoader :
         self.__output_directory = output_directory
 
     def get_img_path(self, scenario_id : int, index : int):
-        """Returns the path to find a specific image file"""
+        """Returns the path to find an image file given its scenario_id and its frame index"""
         return os.path.join(self.__input_directory,"scenario_{}".format(scenario_id),str(index).zfill(4)+".jpg")
 
     def get_npy_path(self, scenario_id : int, index : int):
-        """Returns the path to find a specific npy file"""
+        """Returns the path to find a npy file given its scenario_id and its frame index"""
         return os.path.join(self.__input_directory,"scenario_{}".format(scenario_id),"npy","Image"+str(index).zfill(4)+".npy")
 
     def load_pair_images_openCV(self,scenario_id : int, index : int):
