@@ -15,12 +15,6 @@ class DataLoader :
     def load_im(self, scenario_id : int, index : int):
         raise NotImplementedError
 
-    def load_pair_images_openCV(self,scenario_id : int, index : int):
-        left_img = cv2.imread(self.get_img_path(scenario_id, index-1))
-        right_img = cv2.imread(self.get_img_path(scenario_id, index-1))
-        npy = np.load(self.get_npy_path(scenario_id,index))
-        return [left_img,right_img,npy]
-
     def crop_im(self, image, pos: tuple, res: int):
         """Crops a square of the image given the position of the upper left corner and the resolution"""
         raise NotImplementedError
@@ -34,11 +28,9 @@ class DataLoader :
         boxes_list = line.split("colis.")
         boxes_list = boxes_list[1:]
         if len(boxes_list)>=1 :
-            for i in range(len(boxes_list)-1) :
-                boxes_list[i] = boxes_list[i][7:-3].split(",")
+            for i in range(len(boxes_list)) :
+                boxes_list[i] = boxes_list[i][boxes_list[i].find("[")+1:boxes_list[i].find("]")].split(",")
                 boxes_list[i] = [int(txt) for txt in boxes_list[i]]
-            boxes_list[-1] = boxes_list[-1][7:-4].split(",")
-            boxes_list[-1] = [int(txt) for txt in boxes_list[-1]]
         return boxes_list
 
     def check_identif(self,boxes_list: list, pos: tuple, res: int) -> bool :
@@ -82,9 +74,9 @@ class DataLoader :
         cropped = self.crop_im(im, (im_height - res, im_width-res), res)
         self.save_cropped(scenario_id,index,cropped, (im_height - res, im_width-res), res, boxes_list)
 
-    def crop_scenario_npy(self, scenario_id : int, res : int):
+    def crop_scenario_npy(self, scenario_id : int, res : int, nb_frames: int):
         """Crops all images from one scenario given a grid size"""
-        for i in tqdm(range(500)) :
+        for i in tqdm(range(nb_frames)) :
             self.crop_unique(scenario_id, i ,res)
 
 
@@ -121,10 +113,27 @@ class DataImageLoader(DataLoader) :
         """Returns the path to find an image file given its scenario_id and its frame index"""
         return os.path.join(self._input_directory, "scenario_{}".format(scenario_id), str(index).zfill(4) + ".jpg")
 
+    def load_im(self, scenario_id : int, index : int):
+        """Loads npy file given its scenario_id and its frame index"""
+        return cv2.imread(os.path.join(self._input_directory,
+                                       "scenario_{}".format(scenario_id),
+                                       str(index).zfill(4) + ".jpg"))
 
-data_loader = DataDepthMapLoader(os.path.join("..","..","stereo-tracking"),os.path.join("..","..","cropped"))
-data_loader.crop_scenario_npy(0,64)
-data_loader.crop_scenario_npy(0,128)
+    def save_cropped(self, scenario_id: int, index: int, cropped_array: np.ndarray, pos: tuple, res: int, boxes_list: list):
+        if self.check_identif(boxes_list, pos, res) :
+            cv2.imwrite(os.path.join(self._output_directory, "scenario_" + str(scenario_id) + "_" + str(res),
+                                 str(index).zfill(4) + "_" + str(pos[1]) + "_" + str(pos[0])+".jpg"), cropped_array)
+
+    def crop_im(self, image_array: np.ndarray, pos: tuple, res: int):
+        """Crops a square of the image given the position of the upper left corner and the resolution"""
+        return image_array[pos[0]:pos[0] + res, pos[1]:pos[1] + res,:]
+
+
+
+data_loader_npy = DataDepthMapLoader(os.path.join("..","..","stereo-tracking"),os.path.join("..","..","cropped","npy"))
+data_loader_jpg = DataImageLoader(os.path.join("..","..","stereo-tracking"),os.path.join("..","..","cropped","jpg"))
+# data_loader_jpg.crop_scenario_npy(0,64,22)
+data_loader_jpg.crop_scenario_npy(0,128,50)
 
 
 
