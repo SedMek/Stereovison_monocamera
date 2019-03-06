@@ -25,8 +25,8 @@ if __name__ == "__main__":
 	ap.add_argument("-p", "--position", type=int, default=0,help="position of the top left pixel of the cropped image")
 	args = vars(ap.parse_args())
 	
-	READ_DIRECTORY = os.path.join(os.path.expanduser('~'), 'Desktop','Cours','OSY',"Projet d'option", 'Data', 'scenario_0')
-	SAVE_DIRECTORY = os.path.join(os.path.expanduser('~'), 'Desktop','Cours','OSY',"Projet d'option", 'Data', 'scenario_0_'+str(args['size']))
+	READ_DIRECTORY = os.path.join(os.path.expanduser('~'), 'Desktop','Cours','OSY',"Projet d'option", 'DepthNet', 'stereo-tracking', 'scenario_0')
+	SAVE_DIRECTORY = os.path.join(os.path.expanduser('~'), 'Desktop','Cours','OSY',"Projet d'option", 'DepthNet', 'stereo-tracking', 'scenario_0_'+str(args['size']))
 	
 	try:
 		if not os.path.exists(SAVE_DIRECTORY):
@@ -35,7 +35,7 @@ if __name__ == "__main__":
 		print('Error creating directory'+SAVE_DIRECTORY)
 
 	for filename in tqdm(os.listdir(READ_DIRECTORY)):
-		if filename.endswith('.jpg') and filename.startswith('001'):
+		if filename.endswith('.jpg'):
 			image = READ_DIRECTORY+'/'+filename
 			cropped = SAVE_DIRECTORY+'/'+filename
 			if args['position']:
