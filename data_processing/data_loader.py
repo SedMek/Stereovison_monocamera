@@ -7,10 +7,12 @@ from tqdm import tqdm
 class DataLoader :
     """Abstract class for handling data extraction and preprocessing"""
 
-    def __init__(self,input_directory : str, output_directory : str):
+    def __init__(self,input_directory : str, output_directory : str, check_boxes = True):
         """Specifies the input directory to find the data and the output directory """
         self._input_directory = input_directory
         self._output_directory = output_directory
+        self._check_boxes = check_boxes #If check_boxes = False, the cropper will crop all the images, otherwise only
+                                        #the cells with boxes will be cropped
 
     def load_im(self, scenario_id : int, index : int):
         raise NotImplementedError
@@ -35,6 +37,8 @@ class DataLoader :
 
     def check_identif(self,boxes_list: list, pos: tuple, res: int) -> bool :
         """Checks if the box given with pos and res intersect with one of the boxes in boxes_list"""
+        if not(self._check_boxes) :
+            return True
         for box in boxes_list :
             if pos[0]<=box[2] and pos[1]<=box[3] and pos[0]+res >= box[0] and pos[1]+res >= box[1] :
                 return True
@@ -83,8 +87,8 @@ class DataLoader :
 class DataDepthMapLoader(DataLoader):
     """Class for handling npy data extraction and preprocessing (inherits from DataLoader)"""
 
-    def __init__(self,input_directory: str, output_directory: str):
-        DataLoader.__init__(self,input_directory,output_directory)
+    def __init__(self,input_directory: str, output_directory: str,check_boxes = True):
+        DataLoader.__init__(self,input_directory,output_directory,check_boxes)
 
     def load_im(self, scenario_id : int, index : int):
         """Loads npy file given its scenario_id and its frame index"""
@@ -106,8 +110,8 @@ class DataDepthMapLoader(DataLoader):
 class DataImageLoader(DataLoader) :
     """Class for handling jpeg data extraction and preprocessing (inherits from DataLoader)"""
 
-    def __init__(self,input_directory: str, output_directory: str):
-        DataLoader.__init__(self,input_directory,output_directory)
+    def __init__(self,input_directory: str, output_directory: str,check_boxes = True):
+        DataLoader.__init__(self,input_directory,output_directory, check_boxes)
 
     def get_path(self, scenario_id : int, index : int):
         """Returns the path to find an image file given its scenario_id and its frame index"""
@@ -130,8 +134,8 @@ class DataImageLoader(DataLoader) :
 
 
 
-data_loader_npy = DataDepthMapLoader(os.path.join("..","..","stereo-tracking"),os.path.join("..","..","cropped","npy"))
-data_loader_jpg = DataImageLoader(os.path.join("..","..","stereo-tracking"),os.path.join("..","..","cropped","jpg"))
+data_loader_npy = DataDepthMapLoader(os.path.join("..","..","stereo-tracking"),os.path.join("..","..","cropped","npy"),True)
+data_loader_jpg = DataImageLoader(os.path.join("..","..","stereo-tracking"),os.path.join("..","..","cropped","jpg"),True)
 data_loader_npy.crop_scenario(0,128,50)
 data_loader_jpg.crop_scenario(0,128,50)
 
