@@ -74,7 +74,7 @@ class DataLoader :
         cropped = self.crop_im(im, (im_height - res, im_width-res), res)
         self.save_cropped(scenario_id,index,cropped, (im_height - res, im_width-res), res, boxes_list)
 
-    def crop_scenario_npy(self, scenario_id : int, res : int, nb_frames: int):
+    def crop_scenario(self, scenario_id : int, res : int, nb_frames: int):
         """Crops all images from one scenario given a grid size"""
         for i in tqdm(range(nb_frames)) :
             self.crop_unique(scenario_id, i ,res)
@@ -132,8 +132,8 @@ class DataImageLoader(DataLoader) :
 
 data_loader_npy = DataDepthMapLoader(os.path.join("..","..","stereo-tracking"),os.path.join("..","..","cropped","npy"))
 data_loader_jpg = DataImageLoader(os.path.join("..","..","stereo-tracking"),os.path.join("..","..","cropped","jpg"))
-# data_loader_jpg.crop_scenario_npy(0,64,22)
-data_loader_jpg.crop_scenario_npy(0,128,50)
+data_loader_npy.crop_scenario(0,128,50)
+data_loader_jpg.crop_scenario(0,128,50)
 
 
 
