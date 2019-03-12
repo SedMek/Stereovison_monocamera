@@ -4,8 +4,7 @@ import os
 from tqdm import tqdm
 import argparse
 
-def patch_npy(folder, size):
-	
+def files_in_folder(folder):
 	output = set()
 	file_info = dict()
 	for filename in tqdm(os.listdir(folder)):
@@ -27,7 +26,11 @@ def patch_npy(folder, size):
 				file_info[filename_parts[0]] = {'x_pos':set(), 'y_pos':set()}
 				file_info[filename_parts[0]]['y_pos'].add(int(filename_parts[1]))
 				file_info[filename_parts[0]]['x_pos'].add(int(filename_parts[2]))	
+	return file_info
 
+def patch_npy(folder, size):
+	
+	file_info = files_in_folder(folder)
 	for base_name in file_info.keys():
 		file_info[base_name]['x_pos'] = list(file_info[base_name]['x_pos'])
 		file_info[base_name]['y_pos'] = list(file_info[base_name]['y_pos'])
