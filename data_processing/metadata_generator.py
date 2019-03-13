@@ -21,10 +21,10 @@ def files_in_folder(folder):
             sc_img = filename_parts[0]+"_"+filename_parts[1] # example "sc1_0023"
 
             if sc_img in file_info.keys():
-                file_info[sc_img].add((filename_parts[2],filename_parts[1]))
+                file_info[sc_img].add((filename_parts[3],filename_parts[2]))
             else:
                 file_info[sc_img] = set()
-                file_info[sc_img].add((filename_parts[2],filename_parts[1]))
+                file_info[sc_img].add((filename_parts[3],filename_parts[2]))
     
     for sc_img in file_info.keys():
         file_info[sc_img]= list(file_info[sc_img])
@@ -36,9 +36,10 @@ def meta_generator(folder):
 
     meta_scenes = []
     for sc_img in file_info.keys():
+        
+        scenario_name, base_name = sc_img.split('_') # example "sc1_0023" --> "sc1" and "0023"
+        
         for pos in file_info[sc_img]:
-            scenario_name, base_name = sc_img.split('_') # example "sc1_0023" --> "sc1" and "0023"
-
             scene_available = True
             for i in range(10):
                 try:
