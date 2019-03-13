@@ -100,7 +100,7 @@ class DataDepthMapLoader(DataLoader):
 
     def save_cropped(self, scenario_id: int, index: int, cropped_array: np.ndarray, pos: tuple, res: int, boxes_list: list):
         if self.check_identif(boxes_list, pos, res) :
-            np.save(os.path.join(self._output_directory, "scenario_" + str(scenario_id) + "_" + str(res),
+            np.save(os.path.join(self._output_directory, "res_" + str(res),
                                  "sc" + str(scenario_id) + "_" +str(index).zfill(4) + "_" + str(pos[1]) + "_" + str(pos[0])), cropped_array)
 
     def crop_im(self, image_array: np.ndarray, pos: tuple, res: int):
@@ -126,7 +126,7 @@ class DataImageLoader(DataLoader) :
 
     def save_cropped(self, scenario_id: int, index: int, cropped_array: np.ndarray, pos: tuple, res: int, boxes_list: list):
         if self.check_identif(boxes_list, pos, res) :
-            cv2.imwrite(os.path.join(self._output_directory, "scenario_" + str(scenario_id) + "_" + str(res),
+            cv2.imwrite(os.path.join(self._output_directory, "res_" + str(res),
                                  "sc"+str(scenario_id)+"_"+str(index).zfill(4) + "_" + str(pos[1]) + "_" + str(pos[0])+".jpg"), cropped_array)
 
     def crop_im(self, image_array: np.ndarray, pos: tuple, res: int):
