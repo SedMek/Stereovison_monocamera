@@ -43,11 +43,11 @@ def meta_generator(folder):
             scene_available = True
             for i in range(10):
                 try:
-                    if pos not in file_info[scenario_name+ str(int(base_name)+i).zfill(4)] :
+                    if pos not in file_info[scenario_name + "_" + str(int(base_name)+i).zfill(4)] :
                         scene_available = False
                         break
                     else:
-                        file_info[scenario_name + str(int(base_name)+i).zfill(4)].remove(pos) # this is to not include the same picture in another scenario, maybe change it to do data augmentation
+                        file_info[scenario_name+ "_"  + str(int(base_name)+i).zfill(4)].remove(pos) # this is to not include the same picture in another scenario, maybe change it to do data augmentation
                 except KeyError:
                     # there are no more images, so we are not able to form a scenario of 10 pictures
                     scene_available = False
