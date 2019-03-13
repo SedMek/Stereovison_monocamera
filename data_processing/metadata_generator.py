@@ -6,25 +6,28 @@ import os
 def files_in_folder(folder):
     output = set()
     file_info = dict()
+    # Filename has this format "sc1_0023_64_128.jpg or .npy"
     for filename in tqdm(os.listdir(folder)):
-        if filename.endswith('jpg') or filename.endswith('npy'):
+        if filename.endswith('jpg') and filename.replace('jpg','npy') in os.listdir(folder): # Checks that both jpg and npy are available
             
             filename_parts = filename.split('_')
             temp = filename_parts[-1].split('.')
             del filename_parts[-1]
-            filename_parts.extend(temp)
-            filename_parts[0] = filename_parts[0].replace('Image','')
-            
-            # print(filename_parts)
 
-            if filename_parts[0] in file_info.keys():
-                file_info[filename_parts[0]].add((filename_parts[2],filename_parts[1]))
+            filename_parts.extend(temp)
+            filename_parts[1] = filename_parts[1].replace('Image','') # removes "Image" from the beginning of the name if it exists
+            # filename_parts example: ["sc1","0023","64","128"]
+
+            sc_img = filename_parts[0]+"_"+filename_parts[1] # example "sc1_0023"
+
+            if sc_img in file_info.keys():
+                file_info[sc_img].add((filename_parts[2],filename_parts[1]))
             else:
-                file_info[filename_parts[0]] = set()
-                file_info[filename_parts[0]].add((filename_parts[2],filename_parts[1]))
+                file_info[sc_img] = set()
+                file_info[sc_img].add((filename_parts[2],filename_parts[1]))
     
-    for base_name in file_info.keys():
-        file_info[base_name]= list(file_info[base_name])
+    for sc_img in file_info.keys():
+        file_info[sc_img]= list(file_info[sc_img])
     
     return file_info
 
@@ -32,16 +35,18 @@ def meta_generator(folder):
     file_info = files_in_folder(folder)
 
     meta_scenes = []
-    for base_name in file_info.keys():
-        for pos in file_info[base_name]:
+    for sc_img in file_info.keys():
+        for pos in file_info[sc_img]:
+            scenario_name, base_name = sc_img.split('_') # example "sc1_0023" --> "sc1" and "0023"
+
             scene_available = True
             for i in range(10):
                 try:
-                    if pos not in file_info[str(int(base_name)+i).zfill(4)] :
+                    if pos not in file_info[scenario_name+ str(int(base_name)+i).zfill(4)] :
                         scene_available = False
                         break
                     else:
-                        file_info[str(int(base_name)+i).zfill(4)].remove(pos) # this is to not include the same picture in another scenario, maybe change it to do data augmentation
+                        file_info[scenario_name + str(int(base_name)+i).zfill(4)].remove(pos) # this is to not include the same picture in another scenario, maybe change it to do data augmentation
                 except KeyError:
                     # there are no more images, so we are not able to form a scenario of 10 pictures
                     scene_available = False
@@ -49,11 +54,11 @@ def meta_generator(folder):
             
             if scene_available:
                 scene = {}
-                scene["depth"]=[str(int(base_name)+i).zfill(4)+"_"+pos[1]+"_"+pos[0]+".npy" for i in range(10)]
+                scene["depth"]=[scenario_name + str(int(base_name)+i).zfill(4)+"_"+pos[1]+"_"+pos[0]+".npy" for i in range(10)]
                 scene["time_step"]= 0.125 # TODO check if its expressed in seconds (8 Hertz => 0.125 s)
-                scene["speed"]= [-0.8*50, 0, 0] # *50 pour ramener à une échelle de 0 à 100 m # TODO check if the speed should be expressed in meters and if it is expressed in 3D starting with x.
+                scene["speed"]= [-0.8*50, 0, 0] # *50 to scale to 0 à 100 m # TODO check if the speed should be expressed in meters and if it is expressed in 3D starting with x.
                 scene["length"]=  10
-                scene["imgs"]=[str(int(base_name)+i).zfill(4)+"_"+pos[1]+"_"+pos[0]+".jpg" for i in range(10)]
+                scene["imgs"]=[scenario_name + str(int(base_name)+i).zfill(4)+"_"+pos[1]+"_"+pos[0]+".jpg" for i in range(10)]
                 meta_scenes.append(scene)
 
     with open('metadata.json', 'w') as outfile:
