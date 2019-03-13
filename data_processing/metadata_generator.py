@@ -47,7 +47,7 @@ def meta_generator(folder):
                         scene_available = False
                         break
                     else:
-                        file_info[scenario_name+ "_"  + str(int(base_name)+i).zfill(4)].remove(pos) # this is to not include the same picture in another scenario, maybe change it to do data augmentation
+                        file_info[scenario_name+ "_" + str(int(base_name)+i).zfill(4)].remove(pos) # this is to not include the same picture in another scenario, maybe change it to do data augmentation
                 except KeyError:
                     # there are no more images, so we are not able to form a scenario of 10 pictures
                     scene_available = False
@@ -55,11 +55,11 @@ def meta_generator(folder):
             
             if scene_available:
                 scene = {}
-                scene["depth"]=[scenario_name + str(int(base_name)+i).zfill(4)+"_"+pos[1]+"_"+pos[0]+".npy" for i in range(10)]
+                scene["depth"]=[scenario_name + "_" + str(int(base_name)+i).zfill(4)+"_"+pos[1]+"_"+pos[0]+".npy" for i in range(10)]
                 scene["time_step"]= 0.125 # TODO check if its expressed in seconds (8 Hertz => 0.125 s)
                 scene["speed"]= [-0.8*50, 0, 0] # *50 to scale to 0 à 100 m # TODO check if the speed should be expressed in meters and if it is expressed in 3D starting with x.
                 scene["length"]=  10
-                scene["imgs"]=[scenario_name + str(int(base_name)+i).zfill(4)+"_"+pos[1]+"_"+pos[0]+".jpg" for i in range(10)]
+                scene["imgs"]=[scenario_name + "_" + str(int(base_name)+i).zfill(4)+"_"+pos[1]+"_"+pos[0]+".jpg" for i in range(10)]
                 meta_scenes.append(scene)
 
     with open('metadata.json', 'w') as outfile:
