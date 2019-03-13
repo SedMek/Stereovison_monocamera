@@ -51,7 +51,7 @@ def meta_generator(folder):
                 scene = {}
                 scene["depth"]=[str(int(base_name)+i).zfill(4)+"_"+pos[1]+"_"+pos[0]+".npy" for i in range(10)]
                 scene["time_step"]= 0.125 # TODO check if its expressed in seconds (8 Hertz => 0.125 s)
-                scene["speed"]= [-0.8, 0, 0] # TODO check if the speed should be expressed in meters and if it is expressed in 3D starting with x.
+                scene["speed"]= [-0.8*50, 0, 0] # *50 pour ramener à une échelle de 0 à 100 m # TODO check if the speed should be expressed in meters and if it is expressed in 3D starting with x.
                 scene["length"]=  10
                 scene["imgs"]=[str(int(base_name)+i).zfill(4)+"_"+pos[1]+"_"+pos[0]+".jpg" for i in range(10)]
                 meta_scenes.append(scene)
