@@ -96,7 +96,7 @@ class DataDepthMapLoader(DataLoader):
         npy = np.load(os.path.join(self._input_directory,
                                     "scenario_{}".format(scenario_id),
                                     "npy", "Image" + str(index).zfill(4) + ".npy"))
-        return np.clip(npy,a_min = 0, a_max = npy[0,0])
+        return 50*np.clip(npy,a_min = 0, a_max = npy[0,0]) # *50 in order to adapt to DepthNet algorithm
 
     def save_cropped(self, scenario_id: int, index: int, cropped_array: np.ndarray, pos: tuple, res: int, boxes_list: list):
         if self.check_identif(boxes_list, pos, res) :
