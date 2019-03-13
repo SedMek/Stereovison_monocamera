@@ -135,12 +135,13 @@ class DataImageLoader(DataLoader) :
 
 
 
-data_loader_npy = DataDepthMapLoader(os.path.join("..","..","stereo-tracking"),os.path.join("..","..","cropped","npy"),True)
-data_loader_jpg = DataImageLoader(os.path.join("..","..","stereo-tracking"),os.path.join("..","..","cropped","jpg"),True)
-data_loader_npy.crop_scenario(0,64,35)
-data_loader_jpg.crop_scenario(0,64,35)
-data_loader_jpg.crop_scenario(0,64,35,x_offset=32)
-data_loader_npy.crop_scenario(0,64,35,x_offset=32)
+path="/mnt/sdb"
+data_loader_npy = DataDepthMapLoader(os.path.join(path,"stereo-tracking"),os.path.join(path,"cropped"),True)
+data_loader_jpg = DataImageLoader(os.path.join(path,"stereo-tracking"),os.path.join(path,"cropped"),True)
+data_loader_npy.crop_scenario(1,64,35)
+data_loader_jpg.crop_scenario(1,64,35)
+data_loader_jpg.crop_scenario(1,64,35,x_offset=32)
+data_loader_npy.crop_scenario(1,64,35,x_offset=32)
 
 
 
