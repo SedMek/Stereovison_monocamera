@@ -45,8 +45,9 @@ class DataLoader :
         return False
 
 
-    def crop_unique(self, scenario_id : int, index : int, res : int):
-        """Crops a unique frame given its scenario id, its index and the resolution of each cell and saves the cropped images"""
+    def crop_unique(self, scenario_id : int, index : int, res : int, x_offset = 0, y_offset = 0):
+        """Crops a unique frame given its scenario id, its index and the resolution of each cell and saves the cropped images
+        x_offset and y_offset are given to shift the cropping in order to apply data augmentation"""
 
         with open(os.path.join(self._input_directory,"scenario_{}".format(scenario_id),"identif.txt"),mode="r") as identif_file:
             identif = identif_file.readlines()
@@ -63,8 +64,8 @@ class DataLoader :
         # Cropping and saving all cells
         for i in range(int(im_height/res)) :
             for j in range(int(im_width / res)):
-                cropped = self.crop_im(im,(res*i,res*j),res)
-                self.save_cropped(scenario_id,index,cropped,(res*i,res*j),res, boxes_list)
+                cropped = self.crop_im(im,(res*i+y_offset,res*j+x_offset),res)
+                self.save_cropped(scenario_id,index,cropped,(res*i+y_offset,res*j+x_offset),res, boxes_list)
             # Saving last cell of the row (shifting it to the left in order not to overpass the limit)
             cropped = self.crop_im(im,(res*i,im_width-res),res)
             self.save_cropped(scenario_id,index,cropped, (res*i,im_width-res), res, boxes_list)
@@ -78,10 +79,10 @@ class DataLoader :
         cropped = self.crop_im(im, (im_height - res, im_width-res), res)
         self.save_cropped(scenario_id,index,cropped, (im_height - res, im_width-res), res, boxes_list)
 
-    def crop_scenario(self, scenario_id : int, res : int, nb_frames: int):
+    def crop_scenario(self, scenario_id : int, res : int, nb_frames: int, x_offset = 0, y_offset = 0):
         """Crops all images from one scenario given a grid size"""
         for i in tqdm(range(nb_frames)) :
-            self.crop_unique(scenario_id, i ,res)
+            self.crop_unique(scenario_id, i ,res,x_offset,y_offset)
 
 
 class DataDepthMapLoader(DataLoader):
@@ -138,7 +139,8 @@ data_loader_npy = DataDepthMapLoader(os.path.join("..","..","stereo-tracking"),o
 data_loader_jpg = DataImageLoader(os.path.join("..","..","stereo-tracking"),os.path.join("..","..","cropped","jpg"),True)
 data_loader_npy.crop_scenario(0,64,35)
 data_loader_jpg.crop_scenario(0,64,35)
-
+data_loader_jpg.crop_scenario(0,64,35,x_offset=32)
+data_loader_npy.crop_scenario(0,64,35,x_offset=32)
 
 
 
