@@ -100,7 +100,7 @@ class DataDepthMapLoader(DataLoader):
 
     def save_cropped(self, scenario_id: int, index: int, cropped_array: np.ndarray, pos: tuple, res: int, boxes_list: list):
         if self.check_identif(boxes_list, pos, res) :
-            np.save(os.path.join(self._output_directory, "scenario_" + str(scenario_id) + "_" + str(res),
+            np.save(os.path.join(self._output_directory, "res_" + str(res),
                                  "sc" + str(scenario_id) + "_" +str(index).zfill(4) + "_" + str(pos[1]) + "_" + str(pos[0])), cropped_array)
 
     def crop_im(self, image_array: np.ndarray, pos: tuple, res: int):
@@ -126,7 +126,7 @@ class DataImageLoader(DataLoader) :
 
     def save_cropped(self, scenario_id: int, index: int, cropped_array: np.ndarray, pos: tuple, res: int, boxes_list: list):
         if self.check_identif(boxes_list, pos, res) :
-            cv2.imwrite(os.path.join(self._output_directory, "scenario_" + str(scenario_id) + "_" + str(res),
+            cv2.imwrite(os.path.join(self._output_directory, "res_" + str(res),
                                  "sc"+str(scenario_id)+"_"+str(index).zfill(4) + "_" + str(pos[1]) + "_" + str(pos[0])+".jpg"), cropped_array)
 
     def crop_im(self, image_array: np.ndarray, pos: tuple, res: int):
@@ -135,12 +135,13 @@ class DataImageLoader(DataLoader) :
 
 
 
-data_loader_npy = DataDepthMapLoader(os.path.join("..","..","stereo-tracking"),os.path.join("..","..","cropped","npy"),True)
-data_loader_jpg = DataImageLoader(os.path.join("..","..","stereo-tracking"),os.path.join("..","..","cropped","jpg"),True)
-data_loader_npy.crop_scenario(0,64,35)
-data_loader_jpg.crop_scenario(0,64,35)
-data_loader_jpg.crop_scenario(0,64,35,x_offset=32)
-data_loader_npy.crop_scenario(0,64,35,x_offset=32)
+path="/mnt/sdb"
+data_loader_npy = DataDepthMapLoader(os.path.join(path,"stereo-tracking"),os.path.join(path,"cropped"),True)
+data_loader_jpg = DataImageLoader(os.path.join(path,"stereo-tracking"),os.path.join(path,"cropped"),True)
+data_loader_npy.crop_scenario(1,64,35)
+data_loader_jpg.crop_scenario(1,64,35)
+data_loader_jpg.crop_scenario(1,64,35,x_offset=32)
+data_loader_npy.crop_scenario(1,64,35,x_offset=32)
 
 
 
