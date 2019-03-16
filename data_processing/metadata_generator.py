@@ -2,20 +2,22 @@ import argparse
 from tqdm import tqdm
 import json
 import os
+from time import time
 
 def files_in_folder(folder):
     output = set()
     file_info = dict()
     # Filename has this format "sc1_0023_64_128.jpg or .npy"
-    for filename in tqdm(os.listdir(folder)):
-        if filename.endswith('jpg') and filename.replace('jpg','npy') in os.listdir(folder): # Checks that both jpg and npy are available
+    filenames =  os.listdir(folder)
+    for filename in tqdm(filenames):
+        if filename.endswith('jpg') and filename.replace('jpg','npy') in filenames: # Checks that both jpg and npy are available
             
             filename_parts = filename.split('_')
             temp = filename_parts[-1].split('.')
             del filename_parts[-1]
 
             filename_parts.extend(temp)
-            filename_parts[1] = filename_parts[1].replace('Image','') # removes "Image" from the beginning of the name if it exists
+            # filename_parts[1] = filename_parts[1].replace('Image','') # removes "Image" from the beginning of the name if it exists
             # filename_parts example: ["sc1","0023","64","128"]
 
             sc_img = filename_parts[0]+"_"+filename_parts[1] # example "sc1_0023"
@@ -62,13 +64,15 @@ def meta_generator(folder):
                 scene["imgs"]=[scenario_name + "_" + str(int(base_name)+i).zfill(4)+"_"+pos[1]+"_"+pos[0]+".jpg" for i in range(10)]
                 meta_scenes.append(scene)
 
+
     with open('metadata.json', 'w') as outfile:
         json.dump({"scenes":meta_scenes}, outfile)
 
 
 
 if __name__ == "__main__":
-    meta_generator(os.path.join("..","..","cropped","jpg","scenario_0_64"))
+    
+    meta_generator(os.path.join("..","..","cropped","res_64"))
 
     # OLD CODE, TO DELETE IF NOT NEEDED
 
