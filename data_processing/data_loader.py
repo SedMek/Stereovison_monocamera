@@ -52,7 +52,7 @@ class DataLoader :
 
         with open(os.path.join(self._input_directory,"scenario_{}".format(scenario_id),"identif.txt"),mode="r") as identif_file:
             identif = identif_file.readlines()
-        boxes_list = self.parse_identif(identif[index])
+        boxes_list = DataLoader.parse_identif(identif[index])
 
         im = self.load_im(scenario_id,index)
         im_width = np.shape(im)[1]
