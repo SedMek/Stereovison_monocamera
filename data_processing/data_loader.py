@@ -25,7 +25,8 @@ class DataLoader :
         """Saves the cropped image given the scenario id, the index, the position of the upper left corner and the resolution"""
         raise NotImplementedError
 
-    def parse_identif(self,line: str) -> list:
+    @staticmethod
+    def parse_identif(line: str) -> list:
         """Returns a list of boxes corresponding to the line of the identif.txt file"""
         boxes_list = line.split("colis.")
         boxes_list = boxes_list[1:]
